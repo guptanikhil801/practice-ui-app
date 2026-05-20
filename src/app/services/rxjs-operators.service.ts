@@ -49,7 +49,7 @@ export class RxjsOperatorsService implements OnDestroy {
 
     search$
       .pipe(
-        debounceTime(300),
+       // debounceTime(300),
         distinctUntilChanged(),
         switchMap((term) =>
           of(`Result for "${term}"`).pipe(delay(200))

@@ -1,0 +1,17 @@
+<h2>User CRUD Operations</h2>
+
+<div>
+    <input type="text" placeholder="Enter Name" [(ngModel)]="user.name" />
+    <input type="email" placeholder="Enter Email" [(ngModel)]="user.email" />
+    <button (click)="addUser()"> Add User </button>
+</div>
+
+<hr>
+
+<ul>
+    <li *ngFor="let item of users">
+        {{ item.name }} - {{ item.email }}
+        <button (click)="updateUser(item)"> Update </button>
+        <button (click)="deleteUser(item.id!)"> Delete </button>
+    </li>
+</ul>
