@@ -49,10 +49,10 @@ export class RxjsOperatorsService implements OnDestroy {
 
     search$
       .pipe(
-       // debounceTime(300),
+        debounceTime(300),
         distinctUntilChanged(),
         switchMap((term) =>
-          of(`Result for "${term}"`).pipe(delay(200))
+          of(`"${term}"`).pipe(delay(200))
         )
       )
       .subscribe((val) => console.log('switchMap:', val));
@@ -60,7 +60,7 @@ export class RxjsOperatorsService implements OnDestroy {
     search$.next('a');
     search$.next('an');
     search$.next('angular'); // only this emits after debounce
-    // switchMap: Result for "angular"
+    // switchMap:"angular"
   }
 
   /** mergeMap — run all inner observables concurrently */

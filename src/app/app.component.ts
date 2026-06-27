@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { RxjsOperatorsService } from './services/rxjs-operators.service';
-import { concatMap, delay, distinct, distinctUntilChanged, forkJoin, map, mergeMap, of, Subject, switchMap } from 'rxjs';
+import { concatMap, debounceTime, delay, distinct, distinctUntilChanged, forkJoin, map, mergeMap, of, Subject, switchMap } from 'rxjs';
 import { UserComponent } from "./user/user.component";
 import { HttpClient } from '@angular/common/http';
 import { order } from './models/order.model';
@@ -22,8 +22,19 @@ export class AppComponent {
   private baseURL = 'http://localhost:5292';
 
   ngOnInit(): void {
-    //this.rxjsService.demoConcatMap();
-    this.loadEmployeeById(1);
+   this.switchMapExample();
+  }
+
+  switchMapExample() {
+    of(1, 2, 3, 4, 5).pipe(
+      debounceTime(300),
+      switchMap((data) => of(data))
+    ).subscribe(
+      {
+        next: (datai) => { console.log(datai); },
+        error: (err) => { console.error(err); }
+      }
+    )
   }
 
   loadEmployeeById(id: number) {
@@ -38,27 +49,21 @@ export class AppComponent {
     });
   }
 
-  /**
-   * example of forkjoin
-   */
   loadAllEmployeesAndOrders() {
-    const orders$ = this.httpService.get<order[]>(
-      `${this.baseURL}/api/orders`
-    );
-    const employees$ = this.httpService.get<employee[]>(
-      `${this.baseURL}/api/employees`
-    );
 
-    forkJoin({ orders: orders$, employees: employees$ })
-      .subscribe({
-        next: (combinedData) => {
-          console.log(combinedData.employees, combinedData.orders);
-        },
-        error: (err) => {
-          console.error(err);
-        }
-      });
+    const orders$ = this.httpService.get<order[]>(`${this.baseURL}/api/orders/1002`);
+    const employees$ = this.httpService.get<employee[]>(`${this.baseURL}/api/employees/1002/employee-details-with-orders`);
+    forkJoin({orders: orders$, employees: employees$}).subscribe(
+      {
+        next: (data) => {console.log(data.employees, data.orders);},
+        error: (err) => {console.error(err);}
+      }
+    );
   }
+
   ngOnDestroy(): void { this.destroy$.next(); this.destroy$.complete(); }
 
 }
+
+
+
